@@ -6,19 +6,22 @@ private double availableFunds;
 private String currency;
 private double exchangeRate;
 private String accountType;
+private String bank;
 
-public Account(long aNumber,String aType , double funds, String currency, double rate){
+public Account(long aNumber,String aType , double funds,String bank, String currency, double rate){
 	setAccountNumber(aNumber);
 	setAvailableFunds(funds);
 	setCurrency(currency);
 	setExchangeRate(rate);
 	setAccountType(aType);
+	setBank(bank);
 }
-public Account(long aNumber,String aType , double funds, String currency){
+public Account(long aNumber,String aType , double funds,String bank, String currency){
 	setAccountNumber(aNumber);
 	setAvailableFunds(funds);
 	setCurrency(currency);
 	setAccountType(aType);
+	setBank(bank);
 }
 private void setAccountNumber(long x){
 	this.accountNumber=x;
@@ -35,6 +38,9 @@ private void setAccountType(String t){
 private void setExchangeRate(double r){
 	this.exchangeRate=r;
 }
+private void setBank(String b){
+	this.bank = b;
+}
 public long getAccountNumber(){
 	return this.accountNumber;
 }
@@ -50,6 +56,9 @@ public double getExchangeRate(){
 public String getAccountType(){
 	return this.accountType;
 }
+public String getBank(){
+	return this.bank;
+}
 protected double exchangeToUSD(double amount){
 	double exchange=this.getExchangeRate();
 	amount = amount*exchange;
@@ -59,5 +68,9 @@ protected double exchangeFromUSD(double amount){
 	double exchange=this.getExchangeRate();
 	amount = amount/exchange;
 	return amount;
+}
+public void withdraw(double amount){
+	double amountLeft = this.availableFunds - amount;
+	setAvailableFunds(amountLeft);
 }
 }
