@@ -1,8 +1,9 @@
 package display;
 import dataStorage.*;
-
+import database.*;
 import javax.swing.*;
-
+import java.sql.*;
+import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 public class Login extends JFrame implements ActionListener{
@@ -32,7 +33,7 @@ public class Login extends JFrame implements ActionListener{
 
 	
 	
-	public Login (ATM x){
+	public Login (ATM x, Connection Database){
 		String types[] ={"checking", "saving"};
 		//Set up the window
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT); //set window size
@@ -136,7 +137,8 @@ public class Login extends JFrame implements ActionListener{
 	}	
 	public static void main(String[] args){
 		ATM test = new ATM("Mark's Bank", 12345, 20000, "Dollars", 2.75);
-		Login frame = new Login(test);
+		Connection db = DatabaseInfo.getConnection();
+		Login frame = new Login(test, db);
 		frame.setVisible(true);
 	}
 }
