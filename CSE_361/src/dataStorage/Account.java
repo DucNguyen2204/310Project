@@ -4,15 +4,17 @@ public class Account {
 private long accountNumber;
 private double availableFunds;
 private String currency;
-private double exchangeRate;
+private double exchangeRateto;
+private double exchangeRateFrom;
 private String accountType;
 private String bank;
 
-public Account(long aNumber,String aType , double funds,String bank, String currency, double rate){
+public Account(long aNumber,String aType , double funds,String bank, String currency, double rateto, double ratefrom){
 	setAccountNumber(aNumber);
 	setAvailableFunds(funds);
 	setCurrency(currency);
-	setExchangeRate(rate);
+	setExchangeRateto(rateto);
+	setExchangeRateFrom(ratefrom);
 	setAccountType(aType);
 	setBank(bank);
 }
@@ -35,8 +37,11 @@ private void setCurrency(String c){
 private void setAccountType(String t){
 	this.accountType=t;
 }
-private void setExchangeRate(double r){
-	this.exchangeRate=r;
+private void setExchangeRateto(double r){
+	this.exchangeRateto=r;
+}
+private void setExchangeRateFrom(double r){
+	this.exchangeRateto=r;
 }
 private void setBank(String b){
 	this.bank = b;
@@ -50,8 +55,11 @@ public double getAvailableFunds(){
 public String getCurrencyName(){
 	return this.currency;
 }
-public double getExchangeRate(){
-	return this.exchangeRate;
+public double getExchangeRateto(){
+	return this.exchangeRateto;
+}
+public double getExchangeRateFrom(){
+	return this.exchangeRateFrom;
 }
 public String getAccountType(){
 	return this.accountType;
@@ -60,17 +68,20 @@ public String getBank(){
 	return this.bank;
 }
 protected double exchangeToUSD(double amount){
-	double exchange=this.getExchangeRate();
+	double exchange=this.getExchangeRateto();
 	amount = amount*exchange;
 	return amount;
 }
 protected double exchangeFromUSD(double amount){
-	double exchange=this.getExchangeRate();
+	double exchange=this.getExchangeRateFrom();
 	amount = amount/exchange;
 	return amount;
 }
 public void withdraw(double amount){
 	double amountLeft = this.availableFunds - amount;
 	setAvailableFunds(amountLeft);
+}
+public void deposit(double amount){
+	setAvailableFunds(amount+this.availableFunds);
 }
 }

@@ -1,20 +1,20 @@
 package dataStorage;
 
 public class User {
- private long bankCard;
+ private String bankCard;
  private int pin; 
  
- public User(long bankCard, int pin){
+ public User(String bankCard, int pin){
 	 setBankCard(bankCard);
 	 setPin(pin);
  }
- private void setBankCard(long x){
+ private void setBankCard(String x){
 	 this.bankCard=x;
  }
  private void setPin(int pin){
 	 this.pin=pin;
  }
- public long getBankCard(){
+ public String getBankCard(){
 	 return this.bankCard;
  }
  public int getPin(){
