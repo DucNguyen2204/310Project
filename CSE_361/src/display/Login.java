@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 public class Login extends JFrame implements ActionListener{
+	ArrayList<User> users = new ArrayList<User>();
+	ArrayList<ATM> atm = new ArrayList<ATM>();
 	
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 800;
@@ -33,6 +35,7 @@ public class Login extends JFrame implements ActionListener{
 	
 	
 	public Login (ATM x){
+		atm.add(x);
 		String types[] ={"checking", "saving"};
 		//Set up the window
 		this.setSize(FRAME_WIDTH, FRAME_HEIGHT); //set window size
@@ -123,7 +126,7 @@ public class Login extends JFrame implements ActionListener{
 		
 }
 	public void actionPerformed(ActionEvent event){
-		ArrayList<User> users = new ArrayList();
+	
 		if(event.getSource()==loginButton){
 				String bc = bankCard.getText();
 				String p = String.valueOf(pin.getPassword());
@@ -136,9 +139,12 @@ public class Login extends JFrame implements ActionListener{
 			}else if(event.getSource()==withdrawButton&&users.size()!=0){
 				double amount = Double.parseDouble(withdrawAmount.getText());
 				String type = withdrawFrom.getSelectedItem().toString();
-				Account A =databaseFunctions.getAccount(users.get(1).getBankCard(),type);
+				
+				Account A =databaseFunctions.getAccount(users.get(users.size()-1).getUserId(),type);
+				amount=amount+atm.get(0).getTransactionFee(A.getBank());
+				
+				if(amount<A.getAvailableFunds()&&amount>0&&amount<atm.get(0).getAvaibleBills()){
 				A.withdraw(amount);
-				if(amount<A.getAvailableFunds()&&amount>0){
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
 				output.setText(A.getAvailableFunds()+" Remaining");}
 				else{
@@ -147,7 +153,7 @@ public class Login extends JFrame implements ActionListener{
 			}else if(event.getSource()==depositButton){
 				double deposit = Double.parseDouble(depositAmount.getText());
 				String type = depositTo.getSelectedItem().toString();
-				Account A = databaseFunctions.getAccount(users.get(0).getBankCard(),type);
+				Account A = databaseFunctions.getAccount(users.get(0).getUserId(),type);
 				A.deposit(deposit);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
 				output.setText(A.getAvailableFunds()+" Remaining");
@@ -155,27 +161,30 @@ public class Login extends JFrame implements ActionListener{
 				double amount = Double.parseDouble(transferAmount.getText());
 				String withdrawType = transferFrom.getSelectedItem().toString();
 				String depositType = transferTo.getSelectedItem().toString();
-				Account A = databaseFunctions.getAccount(users.get(0).getBankCard(),withdrawType);
-				Account B = databaseFunctions.getAccount(users.get(0).getBankCard(),depositType);
+				Account A = databaseFunctions.getAccount(users.get(0).getUserId(),withdrawType);
+				Account B = databaseFunctions.getAccount(users.get(0).getUserId(),depositType);
 				if(amount < A.getAvailableFunds()&& amount>0){
 				A.withdraw(amount);
 				B.deposit(amount);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
 				databaseFunctions.updateFunds(B.getAvailableFunds(), B.getAccountNumber());
-				output.setText(amount+" has been added to your"+B.getAccountType()+"account from your"+A.getAccountType()+" account");
+				output.setText(amount+" has been added to your "+B.getAccountType()+" account from your "+A.getAccountType()+" account");
 				}else{
-					output.setText("Invalid Transaction");
-				}
-				
+					if(amount>A.getAvailableFunds()) {
+						output.setText("Insuffecent funds.");
+					}else if(atm.get(0).getAvaibleBills()<amount) {
+						output.setText("Please report to the banks as this machine cannot refil the request");
+					}else {
+					output.setText("Invalid Transaction");}}
 			}else if(event.getSource()==checkBalanceButton){
 				String type = check.getSelectedItem().toString();
-				Account A = databaseFunctions.getAccount(users.get(0).getBankCard(), type);
-				output.setText(A.getAvailableFunds()+"Remaining");
+				Account A = databaseFunctions.getAccount(users.get(0).getUserId(), type);
+				output.setText(A.getAvailableFunds()+" Remaining");
 			}
 		}
 		
 	public static void main(String[] args){
-		ATM test = new ATM("Mark's Bank", 12345, 20000, "Dollars", 2.75);
+		ATM test = new ATM("US BANK", 12345, 20000, "Dollars", 2.75);
 		databaseFunctions.createTables();
 		Login frame = new Login(test);
 		frame.setVisible(true);
