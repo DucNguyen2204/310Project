@@ -30,7 +30,7 @@ public class databaseFunctions {
 			query = "CREATE TABLE Account(accountId int not null primary key auto_increment,userId int not null,availableFund double,currencyName varchar(10),exchangeRateToUSD double,exchangeRateFromUSD double,type varchar(10),foreign key (userId) references User(userId))collate=latin1_general_cs";
 			stmt.executeUpdate(query);
 			
-			query = "CREATE TABLE Bank(bankId int not null primary key auto_increment,accountId int not null,bankName varchar(255),foreign key (accountId) references Account(accountId))collate=latin1_general_cs";
+			query = "CREATE TABLE Bank(bankId int not null primary key auto_increment,accountID int not null,bankName varchar(255),foreign key (accountId) references Account(accountId))collate=latin1_general_cs";
 			stmt.executeUpdate(query);
 			
 			query = "INSERT INTO User(cardNumber, PIN) values ('0321 3213 4313 5543', '3214')";
@@ -55,7 +55,7 @@ public class databaseFunctions {
 			query="INSERT INTO Account(userId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type) values ((SELECT userId FROM User WHERE userId = 1), 14314.31, 'USD', 1.00, 1.00, 'saving')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Account(userId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type) values ((SELECT userId FROM User WHERE userId = 2), 5432401, 'VND', 0.000044, 22831.05, 'checking')";
+			query="INSERT INTO Account(userId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type) values ((SELECT userId FROM User WHERE userId = 2), 5432401.00, 'USD', 1.00, 1.00, 'checking')";
 			stmt.executeUpdate(query);
 			
 			query="INSERT INTO Account(userId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type) values ((SELECT userId FROM User WHERE userId = 4), 68194, 'CNY', 0.16, 6.33, 'checking')";
@@ -68,22 +68,22 @@ public class databaseFunctions {
 			query="INSERT INTO Account(userId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type) values ((SELECT userId FROM User WHERE userId = 3), 34132, 'GBP', 1.39, 0.72, 'checking')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Bank(accountId, bankName) values ((SELECT accountId FROM Account WHERE accountId = 1), 'Wells Fargo')";
+			query="INSERT INTO Bank(accountID, bankName) values ((SELECT accountId FROM Account WHERE accountId = 1), 'Wells Fargo')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Bank(accountId, bankName) values ((SELECT accountId FROM Account WHERE accountId = 3), 'Techcom Bank')";
+			query="INSERT INTO Bank(accountID, bankName) values ((SELECT accountId FROM Account WHERE accountId = 3), 'Techcom Bank')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Bank(accountId, bankName) values ((SELECT accountId FROM Account WHERE accountId = 5), 'Mizuho Trust & Banking')";
+			query="INSERT INTO Bank(accountID, bankName) values ((SELECT accountId FROM Account WHERE accountId = 5), 'Mizuho Trust & Banking')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Bank(accountId, bankName) values ((SELECT accountId FROM Account WHERE accountId = 2), 'US BANK')";
+			query="INSERT INTO Bank(accountID, bankName) values ((SELECT accountId FROM Account WHERE accountId = 2), 'US BANK')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Bank(accountId, bankName) values ((SELECT accountId FROM Account WHERE accountId = 4), 'Hua Xia Bank')";
+			query="INSERT INTO Bank(accountID, bankName) values ((SELECT accountId FROM Account WHERE accountId = 4), 'Hua Xia Bank')";
 			stmt.executeUpdate(query);
 			
-			query="INSERT INTO Bank(accountId, bankName) values ((SELECT accountId FROM Account WHERE accountId = 6), 'Barclays')";
+			query="INSERT INTO Bank(accountID, bankName) values ((SELECT accountId FROM Account WHERE accountId = 6), 'Barclays')";
 			stmt.executeUpdate(query);
 			
 			stmt.close();
@@ -111,17 +111,22 @@ public class databaseFunctions {
 	public static User verify(String cardNumber,String pin){
 		User c=null;
 		int dbPIN=0;
+		int userNumber=0;
 		Connection db = DatabaseInfo.getConnection();
 		PreparedStatement stmt=null;
 		try{
 			
-			stmt = db.prepareStatement("Select PIN from User where cardNumber = "+"'"+cardNumber+"'");
+			stmt = db.prepareStatement("Select PIN,userId from User where cardNumber = "+"'"+cardNumber+"'"+ "and PIN ="+"'"+pin+"'");
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()){
-				   dbPIN=rs.getInt(1);
+				   dbPIN=rs.getInt("pin");
+				   userNumber = rs.getInt("userId");
+			}else {	
 			}
-		if(dbPIN == Integer.parseInt(pin)){
-			c= new User(cardNumber,dbPIN);
+		if(Integer.toString(dbPIN).equals(pin)){
+			c= new User(cardNumber,dbPIN,userNumber);
+		}else {
+			c= new User();
 		}
 	}catch(SQLException se){
         //Handle errors for JDBC
@@ -143,27 +148,47 @@ public class databaseFunctions {
        }}
 		return c;
 	}
-	public static Account getAccount(String card, String Type){
+	public static Account getAccount(int card, String Type){
 		Account A=null;
 		Connection db = DatabaseInfo.getConnection();
 		PreparedStatement stmt=null;
+		long accountnumber=0;
+		   double availableFund=0;
+		   String currency=null;
+		   double rateTo=0;
+		   double rateFrom=0;
+		   String bank=null;
 		try{
 			
-			stmt = db.prepareStatement("Select accountId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type, bankName From Account where cardNumber ="+"'"+card+"'"+"and type ="+"'"+Type+"'");
+			stmt = db.prepareStatement("Select accountId, availableFund, currencyName, exchangeRateToUSD, exchangeRateFromUSD, type From Account where userId ="+"'"+card+"'"+"and type ="+"'"+Type+"'");
 			ResultSet rs = stmt.executeQuery();
-			while(rs.next()){
-				   long accountnumber = rs.getLong("accountId");
-				   double availableFund = rs.getDouble("availableFund");
-				   String currency = rs.getString("currencyName");
-				   double rateTo = rs.getDouble("exchangeRateToUSD");
-				   double rateFrom = rs.getDouble("exchangeRateFromUSD");
-				   String bank = rs.getString("bankName");
-				   if(rateTo!=1){
+			if(rs.next()){
+				   accountnumber = rs.getLong("accountId");
+				   availableFund = rs.getDouble("availableFund");
+				   currency = rs.getString("currencyName");
+				   rateTo = rs.getDouble("exchangeRateToUSD");
+				   rateFrom = rs.getDouble("exchangeRateFromUSD");
+				     
+			}else {
+				accountnumber = 0;
+				availableFund =0;
+				currency = "USD";
+				rateTo=1;
+				rateFrom =1;
+				
+			}
+			stmt = db.prepareStatement("Select bankName from Bank where accountID ="+"'"+accountnumber+"'");
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				bank= rs.getString("bankName");
+			}else {
+				bank = "Bank";
+			}
+			if(rateTo!=1){
 				   A = new Account(accountnumber,Type,availableFund,bank, currency, rateTo,rateFrom);}
 				   else{
 					   A = new Account(accountnumber,Type,availableFund,bank, currency);
 				   }
-			}
 	}catch(SQLException se){
         //Handle errors for JDBC
         se.printStackTrace();
@@ -188,7 +213,7 @@ public class databaseFunctions {
 		Connection db = DatabaseInfo.getConnection();
 		Statement stmt=null;
 		try{
-			String query = "Update availableFund ="+"'"+x+"'"+"Where accountId ="+"'"+number+"'";
+			String query = "Update Account set availableFund ="+"'"+x+"'"+"Where accountId ="+"'"+number+"'";
 			stmt = db.prepareStatement(query);
 			stmt.executeUpdate(query);
 			

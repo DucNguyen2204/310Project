@@ -67,7 +67,7 @@ public String getAccountType(){
 public String getBank(){
 	return this.bank;
 }
-protected double exchangeToUSD(double amount){
+public double exchangeToUSD(double amount){
 	double exchange=this.getExchangeRateto();
 	amount = amount*exchange;
 	return amount;

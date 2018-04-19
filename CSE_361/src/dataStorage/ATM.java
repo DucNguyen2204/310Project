@@ -3,13 +3,13 @@ package dataStorage;
 public class ATM {
 private String bankName;
 private int routingNumber;
-private int availableBills;
+private double availableBills;
 private double transactionFee;
 private String currencyName;
 
 public ATM(){}
 
-public ATM(String bankName, int routingNumber, int availableBills, String currencyName, double transactionFee){
+public ATM(String bankName, int routingNumber, double availableBills, String currencyName, double transactionFee){
 	setBankName(bankName);
 	setRoutingNumber(routingNumber);
 	setAvailableBills(availableBills);
@@ -28,7 +28,7 @@ private void setBankName(String x){
 private void setRoutingNumber(int y){
 	this.routingNumber=y;
 }
-protected void setAvailableBills(int z){
+protected void setAvailableBills(double z){
 	this.availableBills=z;
 }
 public String getBankName(){
@@ -37,7 +37,7 @@ public String getBankName(){
 public int getRoutingNumber(){
 	return this.routingNumber;
 }
-public int getAvaibleBills(){
+public double getAvaibleBills(){
 	return this.availableBills;
 }
 public double getTransactionFee(String x){
@@ -48,5 +48,8 @@ public double getTransactionFee(String x){
 }
 public String getCurrencyName(){
 	return this.currencyName;
+}
+public void withdraw(double x) {
+	this.setAvailableBills(x);
 }
 }
