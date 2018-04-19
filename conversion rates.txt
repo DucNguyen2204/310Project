@@ -1,0 +1,5 @@
+USD to Euro .81
+USD to Peso 18.44
+USD to Canadian Dollar 1.27
+USD to Japanese Yen 107.40
+To switch these back just to 1/value
