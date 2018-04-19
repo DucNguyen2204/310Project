@@ -1,0 +1,34 @@
+//This first piece goes after:
+//amount=amount+atm.get(0).getTransactionFee(A.getBank());
+
+
+
+
+if(!A.getCurrencyName().equals("USD")){
+	if(A.getCurrencyName().equals("Mexican Peso")){
+		A.setExchangeRateto(.054);
+	}
+	else if(A.getCurrencyName().equals("Canadian Dollar")){
+		A.setExchangeRateto(.81);
+	}
+	else if(A.getCurrencyName().equals("Euro")){
+		A.setExchangeRateto(1.23);
+	}
+	else if(A.getCurrencyName().equals("Yen")){
+		A.setExchangeRateto(.0093);
+	}
+}
+
+
+
+
+
+//this second piece goes wherever you're doing a transaction where the currency could
+//be outside of USD (so like in the withdraw portion, the end result will be in USD)
+//There also shouldn't be any problems since the exchange rates were already set on
+//account A
+
+if(!A.getCurrencyName().equals("USD")){
+	A.exchangeToUSD(amount);
+	amount = Math.round(amount * 100.0) / 100.0;
+}
