@@ -24,19 +24,19 @@ public class Login extends JFrame implements ActionListener{
 	private JButton transTrans;
 	private JButton transCheck;
 	private JButton transDep;
-	
+	private JButton transaction;
+	private JButton logout;
 	private JLabel background;
 	private JTextField bankCard;
 	private JPasswordField pin;
-	private JTextField withdrawAmount;
-	private JTextField depositAmount;
-	private JTextField transferAmount;
+	private JTextField transactionAmount;
 	private JButton check;
 	private JButton save;
 	private boolean check1;
 	private boolean withdraw;
 	private boolean deposit;
 	private boolean transfer;
+	private JTextField output;
 	
 	
 	
@@ -114,7 +114,8 @@ public class Login extends JFrame implements ActionListener{
 					transDep.addActionListener(this);
 					transWith.addActionListener(this);
 				}else{
-					
+				bankCard.setText("Bank Card Number");
+				pin.setText(null);
 				}
 			}else if(event.getSource()==transDep){
 				deposit = true;
@@ -222,53 +223,99 @@ public class Login extends JFrame implements ActionListener{
 				background.remove(check);
 				background.remove(save);
 				check1=true;
+				output = new JTextField();
+				output.setBounds(350,150,600,200);
+				background.add(output);
 				if(withdraw==true) {
-					withdrawAmount = new JTextField("Withdraw Amount");
-					withdrawAmount.setBounds(550,450,200,40);
-					background.add(withdrawAmount);
+					transactionAmount = new JTextField("Withdraw Amount");
+					transactionAmount.setBounds(550,450,200,40);
+					background.add(transactionAmount);
 					//withdrawButton
 					withdrawButton = new JButton("Withdraw");
 					withdrawButton.setBounds(575, 500, BUTTON_WIDTH, BUTTON_HEIGHT);
 					background.add(withdrawButton);
 					withdrawButton.addActionListener(this);
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
 					revalidate();
 					repaint();
 				}
 				else if(deposit == true) {
 					background.remove(check);
 					background.remove(save);
-					depositAmount = new JTextField("Deposit Amount");
-					depositAmount.setBounds(550,450,200,40);
-					background.add(depositAmount);
+					transactionAmount = new JTextField("Deposit Amount");
+					transactionAmount.setBounds(550,450,200,40);
+					background.add(transactionAmount);
 					
 					//DepositButton
 					depositButton = new JButton("Deposit");
 					depositButton.setBounds(575,500, BUTTON_WIDTH, BUTTON_HEIGHT);
 					background.add(depositButton);
 					depositButton.addActionListener(this);
+					
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					
 					revalidate();
 					repaint();
 				}
 				else if(transfer==true) {
-					transferAmount = new JTextField();
-					transferAmount.setBounds(550,450,150,40);
-					background.add(transferAmount);
+					transactionAmount = new JTextField();
+					transactionAmount.setBounds(550,450,150,40);
+					background.add(transactionAmount);
 					
 					//TransferButton
 					transferButton = new JButton("Transfer");
 					transferButton.setBounds(575, 500, BUTTON_WIDTH, BUTTON_HEIGHT);
 					background.add(transferButton);
 					transferButton.addActionListener(this);
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					
 					revalidate();
 					repaint();
 				}
 				else {
 					String type = "checking";
 					Account A = databaseFunctions.getAccount(users.get(users.size()-1).getUserId(), type);
-					if(A.getAccountNumber()!=0) {
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
 					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					
+					revalidate();
+					repaint();
+					
+					if(A.getAccountNumber()!=0) {
+						output.setText(A.getAvailableFunds()+" Remaining");
 					}else {
-						
+						output.setText("That account does not exist.");
 					}
 					
 				}
@@ -276,58 +323,104 @@ public class Login extends JFrame implements ActionListener{
 				background.remove(check);
 				background.remove(save);
 				check1=false;
+				output = new JTextField();
+				output.setBounds(350,150,600,200);
+				background.add(output);
 				if(withdraw==true) {
-					withdrawAmount = new JTextField("Withdraw Amount");
-					withdrawAmount.setBounds(550,450,200,40);
-					background.add(withdrawAmount);
+					transactionAmount = new JTextField("Withdraw Amount");
+					transactionAmount.setBounds(550,450,200,40);
+					background.add(transactionAmount);
 					//withdrawButton
 					withdrawButton = new JButton("Withdraw");
 					withdrawButton.setBounds(575, 500, BUTTON_WIDTH, BUTTON_HEIGHT);
 					background.add(withdrawButton);
 					withdrawButton.addActionListener(this);
+					
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					
 					revalidate();
 					repaint();
 				}
 				else if(deposit == true) {
 					background.remove(check);
 					background.remove(save);
-					depositAmount = new JTextField("Deposit Amount");
-					depositAmount.setBounds(550,450,200,40);
-					background.add(depositAmount);
+					transactionAmount = new JTextField("Deposit Amount");
+					transactionAmount.setBounds(550,450,200,40);
+					background.add(transactionAmount);
 					
 					//DepositButton
 					depositButton = new JButton("Deposit");
 					depositButton.setBounds(575,500, BUTTON_WIDTH, BUTTON_HEIGHT);
 					background.add(depositButton);
 					depositButton.addActionListener(this);
+					
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					
 					revalidate();
 					repaint();
 				}
 				else if(transfer==true) {
-					transferAmount = new JTextField();
-					transferAmount.setBounds(550,450,150,40);
-					background.add(transferAmount);
+					transactionAmount = new JTextField();
+					transactionAmount.setBounds(550,450,150,40);
+					background.add(transactionAmount);
 					
 					//TransferButton
 					transferButton = new JButton("Transfer");
 					transferButton.setBounds(575, 500, BUTTON_WIDTH, BUTTON_HEIGHT);
 					background.add(transferButton);
-					transferButton.addActionListener(this);
+					
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);transferButton.addActionListener(this);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					
 					revalidate();
 					repaint();
 				}
 				else {
 					String type = "saving";
+					transaction = new JButton("Return to Transaction list");
+					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
+					transaction.addActionListener(this);
+					background.add(transaction);
+					
+					logout = new JButton("End Transaction");
+					logout.setBounds(750,600,200,BUTTON_HEIGHT);
+					logout.addActionListener(this);
+					background.add(logout);
+					revalidate();
+					repaint();
 					Account A = databaseFunctions.getAccount(users.get(users.size()-1).getUserId(), type);
 					if(A.getAccountNumber()!=0) {
-					
+						output.setText(A.getAvailableFunds()+" Remaining");
 					}else {
-						
+						output.setText("That account does not exist.");
 					}
 						
 			}}
 		else if(event.getSource()==withdrawButton&&users.size()!=0){
-				double amount = Double.parseDouble(withdrawAmount.getText());
+				double amount = Double.parseDouble(transactionAmount.getText());
 				double atmWithdraw;
 				String type = null;
 				if(check1==true) {
@@ -342,25 +435,30 @@ public class Login extends JFrame implements ActionListener{
 				A.withdraw(amount);
 				atm.get(0).withdraw(atmWithdraw);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
+				output.setText(A.getAvailableFunds()+" Remaining");
 				}
 				else if(atm.get(atm.size()-1).getAvaibleBills()<amount) {
-					
+					output.setText("Insufficent funds in the machine, please see bank to finish transaction.");
 				}else{
-					
+					output.setText("There are insufficent funds in this account");
 				}
 			}else if(event.getSource()==depositButton){
-				double deposit = Double.parseDouble(depositAmount.getText());
+				double deposit = Double.parseDouble(transactionAmount.getText());
 				String type = null;
 				if(check1==true) {
 					type="checking";
 				}else {type="saving";}
 				
 				Account A = databaseFunctions.getAccount(users.get(users.size()-1).getUserId(),type);
+				if(A.getAccountNumber()!=0) {
 				A.deposit(deposit);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
-				;
+				output.setText(A.getAvailableFunds()+" Remaining");
+				}else {
+					output.setText("That account does not exist");
+				}
 			}if(event.getSource()==transferButton){
-				double amount = Double.parseDouble(transferAmount.getText());
+				double amount = Double.parseDouble(transactionAmount.getText());
 				String withdrawType = null;
 				String depositType = null;
 				if(check1 == true) { withdrawType = "checking"; depositType = "saving";}else {
@@ -376,14 +474,52 @@ public class Login extends JFrame implements ActionListener{
 				databaseFunctions.updateFunds(B.getAvailableFunds(), B.getAccountNumber());
 				
 				}else{
-					if(amount>A.getAvailableFunds()) {
-						
+					if(amount>A.getAvailableFunds()&&A.getAccountNumber()!=0) {
+						output.setText("Insufficient funds.");	
 					}else {
+						output.setText("One of the accounts does not exist");
 					}
 				}
 				
 			}
-			
+			else if(event.getSource()==transaction) {
+				background.remove(transactionAmount);
+				background.remove(transaction);
+				background.remove(logout);
+				//background.remove(output);
+				if(deposit==true) {
+					background.remove(depositButton);}
+					else if(transfer==true) {
+					background.remove(transferButton);}
+					else if(withdraw==true) {
+					background.remove(withdrawButton);}background.add(transCheck);
+				background.add(transTrans);
+				background.add(transDep);
+				background.add(transWith);
+				check1=false;
+				revalidate();
+				repaint();
+			}else if(event.getSource()==logout) {
+				background.remove(transactionAmount);
+				background.remove(transaction);
+				background.remove(logout);
+				//background.remove(output);
+				if(deposit==true) {
+				background.remove(depositButton);}
+				else if(transfer==true) {
+				background.remove(transferButton);}
+				else if(withdraw==true) {
+				background.remove(withdrawButton);}
+				check1=false;
+				background.remove(depositButton);
+				background.add(bankCard);
+				background.add(pin);
+				background.add(loginButton);
+				pin.setText(null);
+				bankCard.setText("Bank Card Number");
+				revalidate();
+				repaint();
+			}
 		}
 		
 	public static void main(String[] args){
