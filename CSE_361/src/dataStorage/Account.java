@@ -37,7 +37,7 @@ private void setCurrency(String c){
 private void setAccountType(String t){
 	this.accountType=t;
 }
-private void setExchangeRateto(double r){
+public void setExchangeRateto(double r){
 	this.exchangeRateto=r;
 }
 private void setExchangeRateFrom(double r){
