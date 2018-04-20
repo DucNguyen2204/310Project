@@ -303,7 +303,20 @@ public class Login extends JFrame implements ActionListener{
 					transaction.setBounds(350,600,200,BUTTON_HEIGHT);
 					transaction.addActionListener(this);
 					background.add(transaction);
-					
+					if(!A.getCurrencyName().equals("USD")){
+						if(A.getCurrencyName().equals("Mexican Peso")){
+							A.setExchangeRateto(.054);
+						}
+						else if(A.getCurrencyName().equals("Canadian Dollar")){
+							A.setExchangeRateto(.81);
+						}
+						else if(A.getCurrencyName().equals("Euro")){
+							A.setExchangeRateto(1.23);
+						}
+						else if(A.getCurrencyName().equals("Yen")){
+							A.setExchangeRateto(.0093);
+						}
+					}
 					logout = new JButton("End Transaction");
 					logout.setBounds(750,600,200,BUTTON_HEIGHT);
 					logout.addActionListener(this);
@@ -421,6 +434,7 @@ public class Login extends JFrame implements ActionListener{
 			}}
 		else if(event.getSource()==withdrawButton&&users.size()!=0){
 				double amount = Double.parseDouble(transactionAmount.getText());
+				
 				double atmWithdraw;
 				String type = null;
 				if(check1==true) {
@@ -428,10 +442,18 @@ public class Login extends JFrame implements ActionListener{
 				else {type = "saving";}
 				
 				Account A =databaseFunctions.getAccount(users.get(users.size()-1).getUserId(),type);
+				if(!A.getCurrencyName().equals("USD")){
+					A.exchangeToUSD(amount);
+					amount = Math.round(amount * 100.0) / 100.0;
+				}
 				atmWithdraw= amount;
 				amount=amount+atm.get(0).getTransactionFee(A.getBank());
 				
 				if(amount<A.getAvailableFunds()&&amount>0&&amount<atm.get(0).getAvaibleBills()&&amount%20==0){
+					if(!A.getCurrencyName().equals("USD")){
+						A.exchangeToUSD(amount);
+						amount = Math.round(amount * 100.0) / 100.0;
+					}
 				A.withdraw(amount);
 				atm.get(0).withdraw(atmWithdraw);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
@@ -450,7 +472,12 @@ public class Login extends JFrame implements ActionListener{
 				}else {type="saving";}
 				
 				Account A = databaseFunctions.getAccount(users.get(users.size()-1).getUserId(),type);
+				if(!A.getCurrencyName().equals("USD")){
+					A.exchangeToUSD(deposit);
+					deposit = Math.round(deposit * 100.0) / 100.0;
+				}
 				if(A.getAccountNumber()!=0) {
+					
 				A.deposit(deposit);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
 				output.setText(A.getAvailableFunds()+" Remaining");
@@ -459,6 +486,7 @@ public class Login extends JFrame implements ActionListener{
 				}
 			}if(event.getSource()==transferButton){
 				double amount = Double.parseDouble(transactionAmount.getText());
+				
 				String withdrawType = null;
 				String depositType = null;
 				if(check1 == true) { withdrawType = "checking"; depositType = "saving";}else {
@@ -468,6 +496,10 @@ public class Login extends JFrame implements ActionListener{
 				Account A = databaseFunctions.getAccount(users.get(users.size()-1).getUserId(),withdrawType);
 				Account B = databaseFunctions.getAccount(users.get(users.size()-1).getUserId(),depositType);
 				if(amount < A.getAvailableFunds()&& amount>0&&B.getAccountNumber()!=0){
+					if(!A.getCurrencyName().equals("USD")){
+						A.exchangeToUSD(amount);
+						amount = Math.round(amount * 100.0) / 100.0;
+					}
 				A.withdraw(amount);
 				B.deposit(amount);
 				databaseFunctions.updateFunds(A.getAvailableFunds(), A.getAccountNumber());
